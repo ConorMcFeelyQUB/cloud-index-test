@@ -18,25 +18,30 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def indexer():
     if request.method == "POST":
-        url = request.form["scraperURL"]
+        url = request.form.get("scraperURL")
+
+        if url == None:
+            return "error no url"
+            
         date_time_string = datetime.now().strftime("%Y-/%m/%d %H:%M:%S")
 
         #NEED a try catch here
+        try:
+            content = scrape_test.get_page_text(url)
+            cursor = db.cursor()
+            sql = "INSERT INTO "+ database_name + " (uri, indexedat, content) VALUES (%s, %s, %s)"
+            values = (url, date_time_string, content)
+            cursor.execute(sql, values)
+            db.commit()
 
-        content = scrape_test.get_page_text(url)
-
-        cursor = db.cursor()
-        sql = "INSERT INTO "+ database_name + " (uri, indexedat, content) VALUES (%s, %s, %s)"
-        values = (url, date_time_string, content)
-        cursor.execute(sql, values)
-        db.commit()
-
-        page_additional_links = scrape_test.get_links_within_page(url)
-        number_of_links = len(page_additional_links)
-        #coud just pass url to page then get url back with post request then use that in the next method
+            page_additional_links = scrape_test.get_links_within_page(url)
+            number_of_links = len(page_additional_links)
+            #coud just pass url to page then get url back with post request then use that in the next method
 
 
-        return render_template("additionalCrawl.html", url = url, total_links = number_of_links)
+            return render_template("additionalCrawl.html", url = url, total_links = number_of_links)
+        except :
+            return "Error with" + str(url)
 
     return render_template("index.html")
 
