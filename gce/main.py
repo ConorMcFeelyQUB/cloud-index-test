@@ -3,9 +3,12 @@ from datetime import datetime
 import mysql.connector as mysql
 import scrape_test
 import time
+import os
+
+page_ip = str(os.environ.get("PAGETIP"))
 
 db = mysql.connect(
-    host = "35.187.184.139",
+    host = page_ip,
     user = "root",
     passwd = "QUBccProject"
 )

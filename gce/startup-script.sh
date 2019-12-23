@@ -1,6 +1,8 @@
 
 set -v
 
+GETIP="$(gcloud sql instances describe page-db-instance --format='get(ipAddresses[0].ipAddress)')"
+
 # Install Stackdriver logging agent
 curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
 sudo bash install-logging-agent.sh
@@ -24,6 +26,8 @@ source /opt/app/gce/env/bin/activate
 
 # supervisor set ownership for the account
 chown -R pythonapp:pythonapp /opt/app
+
+echo -n ',PAGEIP='"${GETIP}" >> /opt/app/gce/python-app.conf
 
 # supervisor configuration in proper place
 cp /opt/app/gce/python-app.conf /etc/supervisor/conf.d/python-app.conf
