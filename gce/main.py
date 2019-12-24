@@ -5,7 +5,7 @@ import scrape_test
 import time
 import os
 
-page_ip = str(os.environ.get("PAGETIP"))
+page_ip = str(os.environ.get("PAGEIP"))
 
 db = mysql.connect(
     host = page_ip,
